@@ -24,7 +24,7 @@ function HistoryScreen({ navigation }) {
 
   const handleClearHistory = async () => {
     await clearPlaces();
-    setHistory([]);
+    setSavedPlaces([]);
   };
 
   return (
