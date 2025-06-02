@@ -12,8 +12,7 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen
-          
-          name="Serach"
+          name="Search"
           component={SearchScreen}
           options={{
             headerShown: false,
@@ -26,6 +25,7 @@ export default function App() {
           name="History"
           component={HistoryScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="list" color={color} size={size} />
             ),

@@ -1,9 +1,46 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import { getSavedPlaces } from "../utils/storage";
+import HistoryItem from "../components/HistoryItem";
 
 function HistoryScreen({ navigation }) {
+  const [savedPlaces, setSavedPlaces] = useState([]);
+
+  useEffect(() => {
+    const loadPlaces = async () => {
+      const places = await getSavedPlaces();
+      setSavedPlaces(places);
+    };
+    const unsubscribe = navigation.addListener("focus", loadPlaces);
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
-      <Text>History</Text>
+      <Text style={styles.header}>History</Text>
+      {savedPlaces.length === 0 ? (
+        <Text style={styles.emptyText}>No saved places yet.</Text>
+      ) : (
+        <FlatList
+          data={savedPlaces}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item }) => (
+            <HistoryItem
+              place={item}
+              onPress={() =>
+                navigation.navigate("Search", { selectedPlaceInfo: item })
+              }
+            />
+          )}
+          contentContainerStyle={{ padding: 10 }}
+        />
+      )}
     </View>
   );
 }
@@ -12,9 +49,18 @@ export default HistoryScreen;
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 60,
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: "bold",
+    margin: 10,
+  },
+  emptyText: {
+    textAlign: "center",
+    marginTop: 20,
+    color: "#999",
   },
 });
