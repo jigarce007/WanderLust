@@ -12,9 +12,11 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen
+          
           name="Serach"
           component={SearchScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="pin" color={color} size={size} />
             ),

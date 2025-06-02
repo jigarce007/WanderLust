@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,31 +11,48 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
-function SearchScreen({ navigation }) {
+function SearchScreen() {
   const [location, setlocation] = useState(null);
 
   useEffect(() => {
-    async () => {
+    (async () => {
+      //Asking for permission
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
-          "Permission not granted",
-          "Allow permission to access location",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.goBack(),
-            },
-          ]
+          "Permission Not Granted!",
+          "Location Permission Required to find your location."
         );
         return;
       }
-    };
+      let loc = await Location.getCurrentPositionAsync({});
+      setlocation(loc.coords);
+    })();
   }, []);
 
+  if (!location) {
+    return <ActivityIndicator style={{ flex: 1 }} size={"large"} />;
+  }
   return (
     <View style={styles.container}>
-      <Text>Search a Place</Text>
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: location.latitude,
+          longitude: location.longitude,
+          longitudeDelta: 0.01,
+          latitudeDelta: 0.01,
+        }}
+        showsUserLocation={true}
+      >
+        <Marker
+          coordinate={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+          }}
+          title="You are here!"
+        />
+      </MapView>
     </View>
   );
 }
@@ -45,8 +62,6 @@ export default SearchScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
+  map: { flex: 1 },
 });
