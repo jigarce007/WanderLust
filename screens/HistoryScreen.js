@@ -6,8 +6,9 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { getSavedPlaces } from "../utils/storage";
+import { getSavedPlaces, clearPlaces } from "../utils/storage";
 import HistoryItem from "../components/HistoryItem";
+import ClearHistoryButton from "../components/ClearHistoryButton";
 
 function HistoryScreen({ navigation }) {
   const [savedPlaces, setSavedPlaces] = useState([]);
@@ -20,6 +21,11 @@ function HistoryScreen({ navigation }) {
     const unsubscribe = navigation.addListener("focus", loadPlaces);
     return unsubscribe;
   }, [navigation]);
+
+  const handleClearHistory = async () => {
+    await clearPlaces();
+    setHistory([]);
+  };
 
   return (
     <View style={styles.container}>
@@ -41,6 +47,7 @@ function HistoryScreen({ navigation }) {
           contentContainerStyle={{ padding: 10 }}
         />
       )}
+      <ClearHistoryButton onClear={handleClearHistory} />
     </View>
   );
 }
